@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/conf/accelerator-program" mode="merge"/>
+    <filter root="/content/accelerator-program" mode="merge"/>
+    <filter root="/content/dam/accelerator-program" mode="merge"/>
+    <filter root="/content/experience-fragments/accelerator-program" mode="merge"/>
+</workspaceFilter>
