@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Social Media"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    helpPath="en/cq/current/wcm/default_components.html#Text">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/tabs">
+        <items jcr:primaryType="nt:unstructured">
+            <socialmedia
+                granite:id="socialmedia"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Social Media Configurations"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                <items jcr:primaryType="nt:unstructured">
+                    <columns
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <customcss
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                fieldDescription="Field to enter custom css"
+                                fieldLabel="Custom CSS"
+                                name="./customcss"/>
+                            <configurelinks
+                                granite:class="full-width"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                composite="{Boolean}true"
+                                fieldLabel="Social Media Configurable Links"
+                                name="./cmulti">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                                    name="./socialmedia">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <customcss
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            fieldDescription="Field to enter social media custom css"
+                                            fieldLabel="Anchor Custom CSS"
+                                            name="./anchorcustomcss"/>
+                                        <social-media-icons
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/select"
+                                            fieldDescription="Field to select social media icon"
+                                            fieldLabel="Social media icon"
+                                            name="./socialMediaIcon">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <selectmediaicon
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Select Media Icon"
+                                                    value=""/>
+                                                <facebook
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Facebook"
+                                                    value="fa fa-facebook"/>
+                                                <twitter
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Twitter"
+                                                    value="fa fa-twitter"/>
+                                                <instagram
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Instagram"
+                                                    value="fa fa-instagram"/>
+                                                <linkedin
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Linkedin"
+                                                    value="fa fa-linkedin"/>
+                                                <youtube
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Youtube"
+                                                    value="fa fa-youtube"/>
+                                            </items>
+                                        </social-media-icons>
+                                        <page
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/pathbrowser"
+                                            fieldDescription="Field to select internal or external link"
+                                            fieldLabel="Social Media Company Path"
+                                            name="./socialMediaCompanyPath"/>
+                                        <iconpath
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/pathbrowser"
+                                            fieldDescription="Field to select icon path from dam"
+                                            fieldLabel="Enter Icon Path"
+                                            name="./iconPath"/>
+                                        <openin
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/select"
+                                            fieldDescription="Field to select page opens in new window or same window"
+                                            fieldLabel="Open in"
+                                            name="./socialMediaOpenIn">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <option1
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Same Window"
+                                                    value="_self"/>
+                                                <option2
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="New Window"
+                                                    value="_blank"/>
+                                            </items>
+                                        </openin>
+                                    </items>
+                                </field>
+                            </configurelinks>
+                        </items>
+                    </columns>
+                </items>
+            </socialmedia>
+        </items>
+    </content>
+</jcr:root>

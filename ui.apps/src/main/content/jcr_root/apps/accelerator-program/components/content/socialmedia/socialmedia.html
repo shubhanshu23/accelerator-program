@@ -1,0 +1,21 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<div data-sly-test="${wcmmode.edit}">Social Media</div>
+<div class="col-lg-4 col-md-12 col-sm-12">
+    <!-- Info Social -->
+    <div class="social-holder ${properties.customcss}">
+        <nav>
+            <sly data-sly-use.multiItems="com.adobe.aem.accelerator.program.core.models.SocialMediaHelper">
+                <sly data-sly-list.socialmediaList="${multiItems.socialmedia.listChildren}">
+                    <sly data-sly-use.linkHelper="${'com.adobe.aem.accelerator.program.core.models.LinkHelper' @ link=socialmediaList.socialMediaCompanyPath}">
+                        <a class="${socialmediaList.socialMediaIcon} ${socialmediaList.anchorcustomcss}" href="${linkHelper.linkFormatted}" target="${socialmediaList.socialMediaOpenIn}">
+                            <img data-sly-test="${socialmediaList.iconPath}" style="height:40px; width:40px; padding: 5px" src="${socialmediaList.iconPath}" />
+                        </a>
+                    </sly>
+                </sly>
+            </sly>
+        </nav>
+    </div>
+    <!-- End Social Navigation -->
+</div>
+<!-- End Info Social -->

@@ -1,0 +1,48 @@
+<sly data-sly-test="${!properties.defaultMediaNotReq}">
+    <div class="share-buttons ${properties.iconType} ${properties.customcss}">
+        <!-- Facebook -->
+        <a class="share-btn" data-network="facebook">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/facebook.png" alt="Facebook" />
+        </a>
+        <!-- LinkedIn -->
+        <a class="share-btn" data-network="linkedin">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/linkedin.png" alt="LinkedIn" />
+        </a>
+        <!-- Pinterest -->
+        <a class="share-btn" data-network="pinterest">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/pinterest.png" alt="Pinterest" />
+        </a>
+        <!-- Twitter -->
+        <a class="share-btn" data-network="twitter">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/twitter.png" alt="Twitter" />
+        </a>
+        <!-- Reddit -->
+        <a class="share-btn" data-network="reddit">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/reddit.png" alt="Reddit" />
+        </a>
+        <!-- VK -->
+        <a class="share-btn" data-network="vk">
+            <img src="/apps/accelerator-program/components/content/socialmediashare/icons/vk.png" alt="VK" />
+        </a>
+    </div>
+</sly>
+
+<sly data-sly-test="${properties.defaultMediaNotReq}">
+    <div class="share-buttons ${properties.iconType} ${properties.customcss}">
+        <sly data-sly-use.multiItems="com.adobe.aem.accelerator.program.core.models.SocialMediaHelper">
+          <sly data-sly-list.mediaList="${multiItems.medialinks.listChildren}">
+             <a class="share-btn " data-network="${mediaList.socialMediaIcon}">
+             	<img src="${mediaList.iconPath} " alt="${mediaList.socialMediaIcon}" />
+             </a>
+          </sly>
+      </sly>
+	</div>
+</sly>
+
+<style type="text/css">
+.share-buttons img {width: 35px;height:padding: 5px;border: 0;box-shadow: 0;display: inline;}
+.vertical {display: grid;}
+</style> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/apps/accelerator-program/components/content/socialmediashare/socialmediashare.js"></script>

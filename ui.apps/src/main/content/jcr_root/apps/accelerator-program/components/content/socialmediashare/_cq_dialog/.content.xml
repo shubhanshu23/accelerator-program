@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Social Share"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    helpPath="en/cq/current/wcm/default_components.html#Text">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/tabs">
+        <items jcr:primaryType="nt:unstructured">
+            <socialmedia
+                granite:id="socialmedia"
+                jcr:primaryType="nt:unstructured"
+                jcr:title="Social Media Configurations"
+                sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns">
+                <items jcr:primaryType="nt:unstructured">
+                    <columns
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                        <items jcr:primaryType="nt:unstructured">
+                            <defaultmedianotreq
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/checkbox"
+                                fieldDescription="Field to check default media if not required"
+                                fieldLabel="Default media not req?"
+                                name="./defaultMediaNotReq"
+                                text="Default media not req?"
+                                value="true"/>
+                            <icontype
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/foundation/form/select"
+                                fieldDescription="Field to select icon layout"
+                                fieldLabel="Icon Type"
+                                name="./iconType"
+                                value="horizontal">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <horizontal
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Horizontal"
+                                        value="horizontal"/>
+                                    <vertical
+                                        jcr:primaryType="nt:unstructured"
+                                        text="Vertical"
+                                        value="vertical"/>
+                                </items>
+                            </icontype>
+                            <customcss
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                fieldDescription="Field to enter custom css classes"
+                                fieldLabel="Custom CSS"
+                                name="./customcss"/>
+                            <medialinks
+                                granite:class="full-width"
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                composite="{Boolean}true"
+                                fieldLabel="Social Media Configurable Links"
+                                name="./medialinks">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                                    name="./medialinks">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <social-media-icons
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/select"
+                                            fieldDescription="Field to select social media network"
+                                            fieldLabel="Social media Network"
+                                            name="./socialMediaIcon">
+                                            <items jcr:primaryType="nt:unstructured">
+                                                <facebook
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Facebook"
+                                                    value="facebook"/>
+                                                <linkedin
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Linkedin"
+                                                    value="linkedin"/>
+                                                <pinterest
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Pinterest"
+                                                    value="pinterest"/>
+                                                <twitter
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Twitter"
+                                                    value="twitter"/>
+                                                <reddit
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="Reddit"
+                                                    value="reddit"/>
+                                                <vk
+                                                    jcr:primaryType="nt:unstructured"
+                                                    text="VK"
+                                                    value="vk"/>
+                                            </items>
+                                        </social-media-icons>
+                                        <icon
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/foundation/form/pathbrowser"
+                                            fieldDescription="Field to select icon path from dam"
+                                            fieldLabel="Icon "
+                                            name="./iconPath"/>
+                                    </items>
+                                </field>
+                            </medialinks>
+                        </items>
+                    </columns>
+                </items>
+            </socialmedia>
+        </items>
+    </content>
+</jcr:root>
