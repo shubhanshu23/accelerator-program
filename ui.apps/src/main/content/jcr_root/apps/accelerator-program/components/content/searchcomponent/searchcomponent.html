@@ -1,17 +1,13 @@
 <h2>Search Component!</h2>
-<sly data-sly-use.model="com.adobe.aem.accelerator.program.core.models.SearchModel">
-	<table border = "1" id="customers">
-    	<tr>
-			<th>Number</th>
-            <th>Path</th>
-        </tr>
-        <sly data-sly-list.number="${model.resultPaths}">
-            <tr>
-                <td>${numberList.count}</td>
-                <td><a x-cq-linkchecker="valid" href="${number}.html">${number}</a></td>
-            </tr>
-        </sly>
-    </table>
+<span id="resourcepath" hidden>${resource.path}</span>
+<form>
+    <input type="text" id="keyword" placeholder="Enter search text..." /> <br/>
+    <input id="submit"  type="submit" value="Search" />
+</form>
 
-</sly>
-
+<table id="customers">
+    <tr>
+        <th>Index</th>
+        <th>Path</th>
+    </tr>
+</table>

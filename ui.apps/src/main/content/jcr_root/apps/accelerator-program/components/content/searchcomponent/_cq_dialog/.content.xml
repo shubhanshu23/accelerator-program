@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
     jcr:primaryType="nt:unstructured"
     jcr:title="Quick Search"
     sling:resourceType="cq/gui/components/authoring/dialog"
@@ -60,98 +60,22 @@
                                                         value="page"/>
                                                 </items>
                                             </assetorpage>
-                                            <keywordortag
-                                                granite:class="cq-dialog-dropdown-showhide"
+                                            <tags
                                                 jcr:primaryType="nt:unstructured"
-                                                sling:resourceType="granite/ui/components/coral/foundation/form/select"
-                                                fieldDescription="Select the appropriate selection type."
-                                                fieldLabel="Search for keyword or tag?"
-                                                name="./keywordOrTag">
-                                                <granite:data
-                                                    jcr:primaryType="nt:unstructured"
-                                                    cq-dialog-dropdown-showhide-target=".showhidetargets"/>
-                                                <items jcr:primaryType="nt:unstructured">
-                                                    <keyword
-                                                        jcr:primaryType="nt:unstructured"
-                                                        text="Keyword"
-                                                        value="keyword"/>
-                                                    <cqtag
-                                                        jcr:primaryType="nt:unstructured"
-                                                        text="CqTag"
-                                                        value="cqtag"/>
-                                                </items>
-                                            </keywordortag>
-                                            <tagscontainer
-                                                granite:class="showhidetargets"
+                                                sling:resourceType="cq/gui/components/common/tagspicker"
+                                                fieldDescription="Select tags to populate the filter options."
+                                                fieldLabel="Tags"
+                                                metaType="tags"
+                                                name="./tagsList"/>
+                                            <hits
                                                 jcr:primaryType="nt:unstructured"
-                                                sling:resourceType="granite/ui/components/coral/foundation/container">
-                                                <granite:data
-                                                    jcr:primaryType="nt:unstructured"
-                                                    showhidetargetvalue="cqtag"/>
-                                                <items jcr:primaryType="nt:unstructured">
-                                                    <property
-                                                        jcr:primaryType="nt:unstructured"
-                                                        sling:resourceType="granite/ui/components/coral/foundation/form/select"
-                                                        fieldDescription="The name of the field."
-                                                        fieldLabel="Tags Property"
-                                                        metadataFieldTypes="[tags]"
-                                                        name="./tagsProperty">
-                                                        <datasource
-                                                            jcr:primaryType="nt:unstructured"
-                                                            sling:resourceType="asset-share-commons/data-sources/filterable-properties"/>
-                                                        <items jcr:primaryType="nt:unstructured">
-                                                            <tagOne
-                                                                jcr:primaryType="nt:unstructured"
-                                                                text="Tags (jcr:content/metadata/cq:tags)"
-                                                                value="jcr:content/metadata/cq:tags"/>
-                                                            <tagTwo
-                                                                jcr:primaryType="nt:unstructured"
-                                                                text="Tags (cq:tags)"
-                                                                value="jcr:content/cq:tags"/>
-                                                        </items>
-                                                    </property>
-                                                    <tags
-                                                        jcr:primaryType="nt:unstructured"
-                                                        sling:resourceType="cq/gui/components/common/tagspicker"
-                                                        fieldDescription="Select tags to populate the filter options."
-                                                        fieldLabel="Tags"
-                                                        metaType="tags"
-                                                        name="./tagsList"/>
-                                                    <ororand
-                                                        jcr:primaryType="nt:unstructured"
-                                                        sling:resourceType="granite/ui/components/coral/foundation/form/select"
-                                                        fieldDescription="Or or And?"
-                                                        fieldLabel="Operation OR or AND?"
-                                                        metadataFieldTypes="[tags]"
-                                                        name="./orOrAnd">
-                                                        <items jcr:primaryType="nt:unstructured">
-                                                            <or
-                                                                jcr:primaryType="nt:unstructured"
-                                                                text="OR operation between tags"
-                                                                value="true"/>
-                                                            <and
-                                                                jcr:primaryType="nt:unstructured"
-                                                                text="AND operation between tags"
-                                                                value="false"/>
-                                                        </items>
-                                                    </ororand>
-                                                </items>
-                                            </tagscontainer>
-                                            <keywordcontainer
-                                                granite:class="showhidetargets"
-                                                jcr:primaryType="nt:unstructured"
-                                                sling:resourceType="granite/ui/components/coral/foundation/container">
-                                                <granite:data
-                                                    jcr:primaryType="nt:unstructured"
-                                                    showhidetargetvalue="keyword"/>
-                                                <items jcr:primaryType="nt:unstructured">
-                                                    <text
-                                                        jcr:primaryType="nt:unstructured"
-                                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
-                                                        fieldLabel="Type the keyword"
-                                                        name="./searchText"/>
-                                                </items>
-                                            </keywordcontainer>
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/numberfield"
+                                                defaultValue="50"
+                                                fieldDescription="Hits Per page"
+                                                fieldLabel="Limit"
+                                                min="1"
+                                                name="./hits"
+                                                value="50"/>
                                         </items>
                                     </column>
                                 </items>
