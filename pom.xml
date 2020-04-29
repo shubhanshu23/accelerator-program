@@ -1921,6 +1921,12 @@
                             
       
       </dependency>
+      <dependency>
+        <groupId>com.adobe.acs</groupId>
+        <artifactId>acs-aem-commons-bundle</artifactId>
+        <version>4.5.2</version>
+        <scope>provided</scope>
+      </dependency>
                     
     
     </dependencies>
