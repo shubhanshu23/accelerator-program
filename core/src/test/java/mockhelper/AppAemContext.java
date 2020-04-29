@@ -9,6 +9,7 @@ import com.google.common.base.Function;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextBuilder;
 import mockhelper.mock.MockSlingModelFilter;
+import mockhelper.mock.MockStyle;
 import mockhelper.mock.MockUserManager;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.sling.api.resource.Resource;
