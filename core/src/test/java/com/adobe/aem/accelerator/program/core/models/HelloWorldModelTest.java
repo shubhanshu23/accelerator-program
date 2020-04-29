@@ -15,8 +15,12 @@
  */
 package com.adobe.aem.accelerator.program.core.models;
 
+import mockhelper.AppAemContext;
+import mockhelper.AppAemContextUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.day.cq.wcm.api.Page;
 import io.wcm.testing.mock.aem.junit5.AemContext;
 import io.wcm.testing.mock.aem.junit5.AemContextExtension;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,22 +36,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Simple JUnit test verifying the HelloWorldModel
  */
-@ExtendWith(AemContextExtension.class)
+@ExtendWith({AemContextExtension.class, MockitoExtension.class})
 class HelloWorldModelTest {
 
+    AemContext context = AppAemContext.newAemContext(ResourceResolverType.JCR_MOCK);
     private HelloWorldModel hello;
 
     private Page page;
     private Resource resource;
 
     @BeforeEach
-    public void setup(AemContext context) throws Exception {
+    public void setup() throws Exception {
 
         // prepare a page with a test resource
         page = context.create().page("/content/mypage");
         resource = context.create().resource(page, "hello",
             "sling:resourceType", "accelerator-program/components/content/helloworld");
-
         // create sling model
         hello = resource.adaptTo(HelloWorldModel.class);
     }
@@ -55,6 +60,7 @@ class HelloWorldModelTest {
     void testGetMessage() throws Exception {
         // some very basic junit tests
         String msg = hello.getMessage();
+        System.out.println(msg);
         assertNotNull(msg);
         assertTrue(StringUtils.contains(msg, resource.getResourceType()));
         assertTrue(StringUtils.contains(msg, page.getPath()));
