@@ -11,7 +11,7 @@ import org.apache.sling.models.annotations.Optional;
 public class SearchModel {
 
 	@Inject
-	@Default(values = "/content/restwithaemcontent/en")
+	@Default(values = "/content/we-retail/language-masters/en")
 	@Optional
 	private String searchRootPath;
 
