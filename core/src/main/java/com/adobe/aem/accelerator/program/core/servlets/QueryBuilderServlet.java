@@ -59,97 +59,132 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 	protected void doPost(SlingHttpServletRequest request, SlingHttpServletResponse response)
 			throws ServletException, IOException {
 
-		String keyword = request.getParameter(KEYWORD); // keyword from the input form
+		/**
+		 * This parameter is passed in the HTTP call
+		 */
+		String keyword = request.getParameter(KEYWORD);
+
 		response.setContentType("application/json");
-		Resource resource = request.getResourceResolver().getResource(
-				"/content/accelerator-program/language-masters/en/jcr:content/root/responsivegrid/searchcomponent");
-		SearchModel model = null;
-		if (resource != null) {
-			model = resource.adaptTo(SearchModel.class);
-		}
+
+		/**
+		 * Get resource resolver instance
+		 */
+		ResourceResolver resourceResolver = request.getResourceResolver();
 
 		try {
-
-			ResourceResolver resourceResolver = request.getResourceResolver();
-			session = resourceResolver.adaptTo(Session.class); // creating session
-
-			// create query description as hash map
-			Map<String, String> predicate = new HashMap<>();
-			predicate.put("path", model.getSearchRootPath());
-			predicate.put("fulltext", keyword);
-
-			// Author can choose page/asset/all from dialog
-			if (model.getAssetOrPage().equals(PAGE)) {
-				predicate.put("type", CQ_PAGE);
-				if (model.getTagsList() != null) {
-					for (int i = 0; i < model.getTagsList().length; i++) {
-						predicate.put("group.p.or", "true"); // combine this group with OR
-						predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/cq:tags");
-						predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
-					}
+			if (resourceResolver != null) {
+				Resource resource = resourceResolver.getResource(
+						"/content/accelerator-program/language-masters/en/jcr:content/root/responsivegrid/searchcomponent");
+				/**
+				 * Adapt resource to Search Model and read dialog values
+				 */
+				SearchModel model = null;
+				if (resource != null) {
+					model = resource.adaptTo(SearchModel.class);
 				}
-			} else if (model.getAssetOrPage().equals("damasset")) {
-				predicate.put("type", DAM_ASSET);
-				if (model.getTagsList() != null) {
-					for (int i = 0; i < model.getTagsList().length; i++) {
-						predicate.put("group.p.or", "true"); // combine this group with OR
-						predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/metadata/cq:tags");
-						predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
-					}
-				}
-			} else {
-				if (model.getTagsList() != null) {
-					for (int i = 0; i < model.getTagsList().length; i++) {
-						predicate.put("group.p.or", "true"); // combine this group with OR
-						predicate.put("group." + String.valueOf(i) + "_property", "cq:tags");
-						predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
-					}
-				}
-			}
+				/**
+				 * Adapting the resource resolver to the session object
+				 */
+				session = resourceResolver.adaptTo(Session.class); // creating session
 
-			Query query = queryBuilder.createQuery(PredicateGroup.create(predicate), session);
-			// can be done in map or with Query methods
-			query.setStart(0); // same as predicate.put("p.offset", "0");
-			query.setHitsPerPage(Integer.valueOf(model.getHits())); // same as predicate.put("p.limit", "60");
+				/**
+				 * Map for the predicates
+				 */
+				Map<String, String> predicate = new HashMap<>();
 
-			SearchResult searchResult = query.getResult();
-			Gson gson = new GsonBuilder().create();
-			List<SearchResultKeys> keys = new ArrayList<SearchResultKeys>();
-			int i = 0;
-			// iterating over the results
-			for (Hit hit : searchResult.getHits()) {
-				SearchResultKeys key = new SearchResultKeys();
-				// Json data has index path
-				key.setIndex(String.valueOf(++i));
-				key.setPath(hit.getPath());
+				/**
+				 * Configuring the Map for the predicate
+				 */
+				predicate.put("path", model.getSearchRootPath());
+				predicate.put("fulltext", keyword);
 
-				// Json data has page title and page description - if page is selected
-				// Json data has asset title and asset description - if asset is selected
+				/**
+				 * Author can choose page/asset/all from the dialog
+				 */
 				if (model.getAssetOrPage().equals(PAGE)) {
-					Resource res = request.getResourceResolver().getResource(hit.getPath());
-					if (res != null) {
-						Page page = res.adaptTo(Page.class);
-						key.setPageTitle(page.getTitle());
-						key.setPageDescription(page.getDescription());
+					predicate.put("type", CQ_PAGE);
+					if (model.getTagsList() != null) {
+						for (int i = 0; i < model.getTagsList().length; i++) {
+							predicate.put("group.p.or", "true"); // combine this group with OR
+							predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/cq:tags");
+							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
+						}
 					}
-
-				} else if (model.getAssetOrPage().equals(DAM_ASSET)) {
-					Resource res = request.getResourceResolver().getResource(hit.getPath());
-					if (res != null) {
-						Resource jcrContent = res.getChild(hit.getPath());
-						Resource metadada = jcrContent.getChild(jcrContent.getPath());
-						key.setAssetTitle(metadada.getValueMap().get("dc:title", "NA"));
-						key.setAssetTitle(metadada.getValueMap().get("dc:description", "NA"));
+				} else if (model.getAssetOrPage().equals("damasset")) {
+					predicate.put("type", DAM_ASSET);
+					if (model.getTagsList() != null) {
+						for (int i = 0; i < model.getTagsList().length; i++) {
+							predicate.put("group.p.or", "true"); // combine this group with OR
+							predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/metadata/cq:tags");
+							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
+						}
+					}
+				} else {
+					if (model.getTagsList() != null) {
+						for (int i = 0; i < model.getTagsList().length; i++) {
+							predicate.put("group.p.or", "true"); // combine this group with OR
+							predicate.put("group." + String.valueOf(i) + "_property", "cq:tags");
+							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
+						}
 					}
 				}
-				keys.add(key);
+
+				/**
+				 * Creating the Query instance
+				 */
+				Query query = queryBuilder.createQuery(PredicateGroup.create(predicate), session);
+
+				/**
+				 * Setting offset and limit can be done using predicates or with Query methods
+				 */
+				query.setStart(0); // same as predicate.put("p.offset", "0");
+				query.setHitsPerPage(Integer.valueOf(model.getHits())); // same as predicate.put("p.limit", "60");
+
+				/**
+				 * Getting the search results
+				 */
+				SearchResult searchResult = query.getResult();
+				Gson gson = new GsonBuilder().create();
+				List<SearchResultKeys> keys = new ArrayList<SearchResultKeys>();
+				int i = 0;
+				// iterating over the results
+				for (Hit hit : searchResult.getHits()) {
+					SearchResultKeys key = new SearchResultKeys();
+					// Json data has index path
+					key.setIndex(String.valueOf(++i));
+					key.setPath(hit.getPath());
+
+					// Json data has page title and page description - if page is selected
+					// Json data has asset title and asset description - if asset is selected
+					if (model.getAssetOrPage().equals(PAGE)) {
+						Resource res = resourceResolver.getResource(hit.getPath());
+						if (res != null) {
+							Page page = res.adaptTo(Page.class);
+							key.setPageTitle(page.getTitle());
+							key.setPageDescription(page.getDescription());
+						}
+
+					} else if (model.getAssetOrPage().equals(DAM_ASSET)) {
+						Resource res = resourceResolver.getResource(hit.getPath());
+						if (res != null) {
+							Resource jcrContent = res.getChild(hit.getPath());
+							Resource metadada = jcrContent.getChild(jcrContent.getPath());
+							key.setAssetTitle(metadada.getValueMap().get("dc:title", "NA"));
+							key.setAssetTitle(metadada.getValueMap().get("dc:description", "NA"));
+						}
+					}
+					keys.add(key);
+				}
+				JsonArray jsonData = gson.toJsonTree(keys).getAsJsonArray();
+				response.getWriter().println(jsonData);
 			}
-			JsonArray jsonData = gson.toJsonTree(keys).getAsJsonArray();
-			response.getWriter().println(jsonData);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
+			if (resourceResolver != null) {
+				resourceResolver.close();
+			}
 			if (session != null) {
 				session.logout(); // logging off session object
 			}
