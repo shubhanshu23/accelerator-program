@@ -11,6 +11,7 @@ import javax.jcr.Session;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
@@ -50,7 +51,6 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 	private static final long serialVersionUID = 1L;
 
 	private static final String TRUE = "true";
-	private static final String NOT_AVAILABLE = "NA";
 	private static final String ALLNODETYPE = "all";
 	private static final String DAMASSET = "damasset";
 	private static final String APPLICATION_JSON = "application/json";
@@ -120,8 +120,7 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 					if (model.getTagsList() != null) {
 						for (int i = 0; i < model.getTagsList().length; i++) {
 							predicate.put("group.p.or", TRUE); // combine this group with OR
-							predicate.put("group." + String.valueOf(i) + "_property",
-									CqTags.PAGE.getCqTag().toString());
+							predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/cq:tags");
 							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
 						}
 					}
@@ -130,8 +129,7 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 					if (model.getTagsList() != null) {
 						for (int i = 0; i < model.getTagsList().length; i++) {
 							predicate.put("group.p.or", TRUE); // combine this group with OR
-							predicate.put("group." + String.valueOf(i) + "_property",
-									CqTags.DAMASSET.getCqTag().toString());
+							predicate.put("group." + String.valueOf(i) + "_property", "jcr:content/metadata/cq:tags");
 							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
 						}
 					}
@@ -139,8 +137,7 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 					if (model.getTagsList() != null) {
 						for (int i = 0; i < model.getTagsList().length; i++) {
 							predicate.put("group.p.or", TRUE); // combine this group with OR
-							predicate.put("group." + String.valueOf(i) + "_property",
-									CqTags.NODETYPE.getCqTag().toString());
+							predicate.put("group." + String.valueOf(i) + "_property", "cq:tags");
 							predicate.put("group." + String.valueOf(i) + "_property.value", model.getTagsList()[i]);
 						}
 					}
@@ -184,8 +181,11 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 						Resource res = resourceResolver.getResource(hit.getPath());
 						if (res != null) {
 							Page page = res.adaptTo(Page.class);
-							key.setPageTitle(page.getTitle());
-							key.setPageDescription(page.getDescription());
+							key.setPageTitle(page.getTitle() != null ? page.getTitle() : StringUtils.EMPTY);
+							key.setPageDescription(
+									page.getDescription() != null ? page.getDescription() : StringUtils.EMPTY);
+							key.setAssetTitle(StringUtils.EMPTY);
+							key.setAssetDescription(StringUtils.EMPTY);
 						}
 
 					} else if (model.getAssetOrPage() != null && model.getAssetOrPage().equals(DAM_ASSET)) {
@@ -193,9 +193,20 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 						if (res != null) {
 							Resource jcrContent = res.getChild(hit.getPath());
 							Resource metadada = jcrContent.getChild(jcrContent.getPath());
-							key.setAssetTitle(metadada.getValueMap().get("dc:title", NOT_AVAILABLE));
-							key.setAssetTitle(metadada.getValueMap().get("dc:description", NOT_AVAILABLE));
+							key.setAssetTitle(metadada.getValueMap().get("dc:title", StringUtils.EMPTY) != null
+									? metadada.getValueMap().get("dc:title", StringUtils.EMPTY)
+									: "");
+							key.setAssetTitle(metadada.getValueMap().get("dc:description", StringUtils.EMPTY) != null
+									? metadada.getValueMap().get("dc:description", StringUtils.EMPTY)
+									: "");
+							key.setPageTitle(StringUtils.EMPTY);
+							key.setPageDescription(StringUtils.EMPTY);
 						}
+					} else {
+						key.setAssetTitle(StringUtils.EMPTY);
+						key.setAssetDescription(StringUtils.EMPTY);
+						key.setPageTitle(StringUtils.EMPTY);
+						key.setPageDescription(StringUtils.EMPTY);
 					}
 					keys.add(key);
 				}
@@ -215,24 +226,6 @@ public class QueryBuilderServlet extends SlingAllMethodsServlet {
 			}
 		}
 
-	}
-
-	enum CqTags {
-		PAGE("jcr:content/cq:tags"), DAMASSET("jcr:content/metadata/cq:tags"), NODETYPE("cq:tags");
-
-		private static String cqTag;
-
-		CqTags(String cqTag) {
-			this.setCqTag(cqTag);
-		}
-
-		public String getCqTag() {
-			return cqTag;
-		}
-
-		public void setCqTag(String cqTag) {
-			CqTags.cqTag = cqTag;
-		}
 	}
 
 }

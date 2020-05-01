@@ -1,13 +1,29 @@
 <h2>Search Component!</h2>
 <span id="resourcepath" hidden>${resource.path}</span>
 <form>
-    <input type="text" id="keyword" placeholder="Enter search text..." /> <br/>
-    <input id="submit"  type="submit" value="Search" />
+	<input type="text" id="keyword" placeholder="Enter search text..." />
+	<br /> <input id="submit" type="submit" value="Search" />
 </form>
-
+</br>
+</br>
+<sly data-sly-test="${properties.searchRootPath}">
+<h2>Result Table</h2>
 <table id="customers">
-    <tr>
-        <th>Index</th>
-        <th>Path</th>
-    </tr>
+	<thead>
+		<tr>
+			<th>Index</th>
+			<th>Path</th>
+			<th>Page Title</th>
+			<th>Page Description</th>
+			<th>Asset Title</th>
+			<th>Asset Description</th>
+		</tr>
+	</thead>
+	<tbody>
+
+	</tbody>
 </table>
+</sly>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
