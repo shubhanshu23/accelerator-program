@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 public interface SolrSearchService {
 
-	String createQueryURL();
+	HttpSolrClient prepareSolrServer();
 
 	JSONArray crawlContent(String resourcePath, String resourceType);
 

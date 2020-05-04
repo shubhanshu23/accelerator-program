@@ -256,8 +256,7 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 
 		LOG.info(" SOLR Query : " + solrQuery.toString());
 		try {
-			String URL = createQueryURL();
-			SolrClient server = new HttpSolrClient(URL);
+			HttpSolrClient server = prepareSolrServer();
 			solrResponse = server.query(solrQuery);
 		} catch (Exception e) {
 			LOG.error(" Error while getting the solr response ", e);
@@ -317,10 +316,18 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 		return facetFields;
 	}
 
-	public String createQueryURL() {
-		String URL = solrConfigurationService.getSolrProtocol() + "://" + solrConfigurationService.getSolrServerName() + ":" +
-				solrConfigurationService.getSolrServerPort() + "/solr/" + solrConfigurationService.getSolrCoreName();
-	      return URL;
+	@Override
+	public HttpSolrClient prepareSolrServer() {
+		String protocol = solrConfigurationService.getSolrProtocol();
+		String serverName = solrConfigurationService.getSolrServerName();
+		String serverPort = solrConfigurationService.getSolrServerPort();
+		String coreName = solrConfigurationService.getSolrCoreName();
+		String pagesResourcePath = solrConfigurationService
+				.getContentPagePath();
+		String URL = protocol + "://" + serverName + ":" + serverPort
+				+ "/solr/" + coreName;
+		HttpSolrClient server = new HttpSolrClient(URL);
+		return server;
 	}
 
 }

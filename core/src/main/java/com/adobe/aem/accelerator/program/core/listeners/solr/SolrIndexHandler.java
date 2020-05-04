@@ -65,8 +65,7 @@ public class SolrIndexHandler implements EventHandler {
                     PageModification.ModificationType type = pMod.getType();
                     String pagePath = pMod.getPath();
                     Resource res = resolver.getResource(pagePath);
-                    String URL = solrSearchService.createQueryURL();
-                    HttpSolrClient server = new HttpSolrClient(URL);
+                    HttpSolrClient server = solrSearchService.prepareSolrServer();
                     SolrQuery query = new SolrQuery();
                     query.set(SolrSearchConstants.SOLR_QUERY_Q,
                             SolrSearchConstants.SOLRDOC_FIELD_ID + ":\"" + pagePath + "\"");

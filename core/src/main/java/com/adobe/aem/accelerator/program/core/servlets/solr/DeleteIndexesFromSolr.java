@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
+import com.adobe.aem.accelerator.program.core.services.solr.SolrSearchService;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrServerConfigurationService;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -30,19 +31,13 @@ public class DeleteIndexesFromSolr extends SlingAllMethodsServlet {
 	private static final Logger LOG = LoggerFactory.getLogger(DeleteIndexesFromSolr.class);
 
 	@Reference
-	SolrServerConfigurationService solrConfigurationService;
+	SolrSearchService solrSearchService;
 
 	@Override
     protected void doPost(final SlingHttpServletRequest reqest,
             final SlingHttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-		final String protocol = solrConfigurationService.getSolrProtocol();
-		final String serverName = solrConfigurationService.getSolrServerName();
-		final String serverPort = solrConfigurationService.getSolrServerPort();
-		final String coreName = solrConfigurationService.getSolrCoreName();
-		String URL = protocol + "://" + serverName + ":" + serverPort
-				+ "/solr/" + coreName;
-		HttpSolrClient server = new HttpSolrClient(URL);
+		HttpSolrClient server = solrSearchService.prepareSolrServer();
 		try {
 			server.deleteByQuery("*:*");
 			server.commit();

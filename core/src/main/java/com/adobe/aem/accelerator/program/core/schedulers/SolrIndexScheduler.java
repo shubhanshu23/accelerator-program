@@ -45,15 +45,9 @@ public class SolrIndexScheduler implements Runnable {
     public void run() {
         log.info(" ****** Solr Index Scheduler ******* ");
         log.info("Solr index job execution begins");
-        final String protocol = solrConfigurationService.getSolrProtocol();
-        final String serverName = solrConfigurationService.getSolrServerName();
-        final String serverPort = solrConfigurationService.getSolrServerPort();
-        final String coreName = solrConfigurationService.getSolrCoreName();
         final String pagesResourcePath = solrConfigurationService
                 .getContentPagePath();
-        String URL = protocol + "://" + serverName + ":" + serverPort
-                + "/solr/" + coreName;
-        HttpSolrClient server = new HttpSolrClient(URL);
+        HttpSolrClient server = solrSearchService.prepareSolrServer();
         try {
             JSONArray indexPageData = solrSearchService.crawlContent(
                     pagesResourcePath, "cq:PageContent");

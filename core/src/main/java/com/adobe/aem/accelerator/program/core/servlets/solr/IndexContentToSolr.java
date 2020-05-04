@@ -50,15 +50,9 @@ public class IndexContentToSolr extends SlingSafeMethodsServlet {
 			IOException {
 		response.setContentType("text/html");
 		String indexType = request.getParameter("indexType");
-		final String protocol = solrConfigurationService.getSolrProtocol();
-		final String serverName = solrConfigurationService.getSolrServerName();
-		final String serverPort = solrConfigurationService.getSolrServerPort();
-		final String coreName = solrConfigurationService.getSolrCoreName();
 		final String pagesResourcePath = solrConfigurationService
 				.getContentPagePath();
-		String URL = protocol + "://" + serverName + ":" + serverPort
-				+ "/solr/" + coreName;
-		HttpSolrClient server = new HttpSolrClient(URL);
+		HttpSolrClient server = solrSearchService.prepareSolrServer();
 		if (indexType.equalsIgnoreCase("indexpages")) {
 			try {
 				JSONArray indexPageData = solrSearchService.crawlContent(
