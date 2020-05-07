@@ -1,0 +1,73 @@
+{
+  "settings":{
+    "analysis":{
+      "analyzer":{
+        "my_analyzer":{
+          "type":"custom",
+          "tokenizer":"standard",
+          "filter":[
+            "lowercase"
+          ]
+        },
+        "my_stop_analyzer":{
+          "type":"custom",
+          "tokenizer":"standard",
+          "filter":[
+            "lowercase",
+            "english_stop"
+          ]
+        }
+      },
+      "filter":{
+        "english_stop":{
+          "type":"stop",
+          "stopwords":"_english_"
+        }
+      }
+    }
+  },
+  "mappings":{
+    "properties":{
+      "type": { "type": "keyword" },
+      "title": {
+        "type":"text",
+        "analyzer":"my_analyzer",
+        "search_analyzer":"my_stop_analyzer",
+        "search_quote_analyzer":"my_analyzer"
+      },
+      "jcr:lastModified": {
+        "type": "date"
+      },
+      "cq:template": {
+        "type": "keyword"
+      },
+      "path": {
+        "type": "text"
+      },
+      "cq:lastModified": {
+        "type": "date"
+      },
+      "jcr:description": {
+        "type":"text",
+        "analyzer":"my_analyzer",
+        "search_analyzer":"my_stop_analyzer",
+        "search_quote_analyzer":"my_analyzer"
+      },
+      "cq:tags": {
+        "type": "keyword"
+      },
+      "dc:title": {
+        "type":"text",
+        "analyzer":"my_analyzer",
+        "search_analyzer":"my_stop_analyzer",
+        "search_quote_analyzer":"my_analyzer"
+      },
+      "dc:description": {
+        "type":"text",
+        "analyzer":"my_analyzer",
+        "search_analyzer":"my_stop_analyzer",
+        "search_quote_analyzer":"my_analyzer"
+      }
+    }
+  }
+}
