@@ -29,7 +29,7 @@
   "mappings":{
     "properties":{
       "type": { "type": "keyword" },
-      "title": {
+      "jcr:title": {
         "type":"text",
         "analyzer":"my_analyzer",
         "search_analyzer":"my_stop_analyzer",

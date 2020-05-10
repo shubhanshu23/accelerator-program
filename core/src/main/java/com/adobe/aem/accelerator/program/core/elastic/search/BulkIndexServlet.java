@@ -1,6 +1,10 @@
 package com.adobe.aem.accelerator.program.core.elastic.search;
 
+import com.adobe.aem.accelerator.program.core.elastic.index.IndexClient;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.DocumentModel;
+import com.adobe.aem.accelerator.program.core.elastic.indexing.config.ElasticSearchIndexConfiguration;
+import com.adobe.aem.accelerator.program.core.elastic.service.ElasticSearchClientService;
+import com.adobe.aem.accelerator.program.core.elastic.service.ElasticSearchHostConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpHost;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -37,6 +41,18 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
     @Reference
     BatchReindex batchReindex;
 
+    @Reference
+    ElasticSearchIndexConfiguration elasticSearchIndexConfiguration;
+
+    @Reference
+    ElasticSearchClientService elasticSearchClientService;
+
+    @Reference
+    ElasticSearchHostConfiguration hostConfiguration;
+
+    @Reference
+    IndexClient client;
+
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
 
@@ -44,13 +60,19 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
         try {
             String pageindex = request.getParameter("pageindex");
             String assetindex = request.getParameter("assetindex");
+            if(!client.indexExists(elasticSearchIndexConfiguration.getIndex(),elasticSearchClientService.getRestHighLevelClient())){
+                client.createIndex(elasticSearchIndexConfiguration.getIndex());
+            }
+
             BulkRequest bulkRequest = new BulkRequest();
             if(pageindex.equals("true")){
-                List<DocumentModel> docList = batchReindex.crawlContent("cq:PageContent", "/content", resourceResolver);
+                List<DocumentModel> docList = batchReindex.crawlContent("cq:PageContent",
+                        elasticSearchIndexConfiguration.getContentPath(), resourceResolver);
                 bulkInsert(bulkRequest,docList);
             }
             if(assetindex.equals("true")){
-                List<DocumentModel> assetList = batchReindex.crawlContent("dam:AssetContent","/content/dam",resourceResolver);
+                List<DocumentModel> assetList = batchReindex.crawlContent("dam:AssetContent",
+                        elasticSearchIndexConfiguration.getAssetPath(),resourceResolver);
                 bulkInsert(bulkRequest,assetList);
             }
             BulkResponse bulkResponse = getBulkItemResponses(bulkRequest);
@@ -73,7 +95,7 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
             try {
                 LOG.info("doc. path"+doc.getPath());
                 if(doc.getId()!=null && doc.getContent()!=null){
-                    indexRequest = new IndexRequest("idx").id(doc.getId()).source(objectMapper.writeValueAsString(doc.getContent()), XContentType.JSON);
+                    indexRequest = new IndexRequest(elasticSearchIndexConfiguration.getIndex()).id(doc.getId()).source(objectMapper.writeValueAsString(doc.getContent()), XContentType.JSON);
                     bulkRequest.add(indexRequest);
                 }
 
@@ -89,7 +111,7 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
         BulkResponse bulkResponse=null;
         try {
             RestHighLevelClient restHighLevelClient = new RestHighLevelClient(RestClient.builder(
-                    new HttpHost("localhost", 9200, "http")));
+                    new HttpHost(hostConfiguration.getHost(), hostConfiguration.getPort(), hostConfiguration.getProtocol())));
             bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
             LOG.info("BulkResponse {}", bulkResponse);
         } catch (Exception e) {

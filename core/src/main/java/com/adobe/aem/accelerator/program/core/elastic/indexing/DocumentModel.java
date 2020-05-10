@@ -13,6 +13,7 @@ import java.util.Map;
 public class DocumentModel {
     private static final Logger LOG = LoggerFactory.getLogger(DocumentModel.class);
 
+    //elastic server index name
     @Getter
     @Setter
     private String index;

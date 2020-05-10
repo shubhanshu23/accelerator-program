@@ -45,7 +45,7 @@
                             <includeArtifactIds>elasticsearch-7.6.1.jar,httpasyncclient-4.1.4.jar,elasticsearch-rest-client-7.6.1.jar,\
                                 elasticsearch-rest-high-level-client-7.6.1.jar,elasticsearch-x-content-7.6.1.jar,\
                                 lucene-core-8.4.0.jar,hppc-0.8.1.jar,log4j-api-2.11.1.jar,lucene-queries-8.4.0.jar,lang-mustache-client-7.6.1.jar,\
-                            rank-eval-client-7.6.1.jar,elasticsearch-core-7.6.1.jar</includeArtifactIds>
+                            rank-eval-client-7.6.1.jar,elasticsearch-core-7.6.1.jar,lucene-join-8.4.0.jar</includeArtifactIds>
                         </configuration>
                     </execution>
                 </executions>
@@ -96,6 +96,7 @@ httpasyncclient-4.1.4.jar;lib=true,\
 elasticsearch-x-content-7.6.1.jar;lib=true,\
 hppc-0.8.1.jar;lib=true,\
 lucene-core-8.4.0.jar;lib=true,\
+lucene-join-8.4.0.jar;lib=true,\
 log4j-api-2.11.1.jar;lib=true,\
 lucene-queries-8.4.0.jar;lib=true,\
 elasticsearch-core-7.6.1.jar;lib=true
@@ -110,7 +111,8 @@ log4j-api-2.11.1.jar,\
 lucene-queries-8.4.0.jar,\
 lang-mustache-client-7.6.1.jar,\
 rank-eval-client-7.6.1.jar,\
-elasticsearch-core-7.6.1.jar
+elasticsearch-core-7.6.1.jar,\
+lucene-join-8.4.0.jar
 Sling-Model-Packages: com.adobe.aem.accelerator.program.core.models
 -snapshot: ${tstamp;yyyyMMddHHmmssSSS}
 Bundle-DocURL:
@@ -340,6 +342,10 @@ Bundle-DocURL:
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queries</artifactId>
             <version>8.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-join</artifactId>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch</groupId>

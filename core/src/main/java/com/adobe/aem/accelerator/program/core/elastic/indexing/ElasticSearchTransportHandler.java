@@ -1,5 +1,6 @@
 package com.adobe.aem.accelerator.program.core.elastic.indexing;
 
+import com.adobe.aem.accelerator.program.core.elastic.index.IndexClient;
 import com.adobe.aem.accelerator.program.core.elastic.service.ElasticSearchClientService;
 import com.day.cq.replication.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,9 @@ public class ElasticSearchTransportHandler implements TransportHandler {
 
     @Reference
     protected ElasticSearchClientService elasticSearchClientService;
+
+    @Reference
+    IndexClient client;
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticSearchTransportHandler.class);
 
@@ -111,7 +115,9 @@ public class ElasticSearchTransportHandler implements TransportHandler {
             LOG.debug("Index-Content: " + contentString);
 
             HttpEntity entity = new NStringEntity(contentString, ContentType.APPLICATION_JSON);
-
+            if(!client.indexExists(content.getIndex(),elasticSearchClientService.getRestHighLevelClient())){
+                client.createIndex(content.getIndex());
+            }
             Request request = new Request("PUT", "/" + content.getIndex() + "/_doc/" + DigestUtils.md5Hex(content.getPath()));
             request.setEntity(entity);
             Response indexResponse = restClient.performRequest(request);

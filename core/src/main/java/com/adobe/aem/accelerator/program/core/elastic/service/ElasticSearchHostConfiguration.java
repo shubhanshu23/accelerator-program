@@ -9,9 +9,7 @@ import org.osgi.service.metatype.annotations.Designate;
 /**
  * Configuration for a single ElasticSearch host
  */
-@Component(service = ElasticSearchHostConfiguration.class, immediate = true, name = ElasticSearchHostConfiguration.SERVICE_NAME,
-        property = "webconsole.configurationFactory.nameHint=Host: {host}")
-
+@Component(service = ElasticSearchHostConfiguration.class, immediate = true, name = ElasticSearchHostConfiguration.SERVICE_NAME)
 @Designate(ocd = ElasticSearchConf.class)
 public class ElasticSearchHostConfiguration {
 

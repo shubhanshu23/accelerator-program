@@ -26,4 +26,19 @@ public @interface ElasticConf {
             description = "name of the index in elastic search."
     )
     public String getIndex();
+
+    @AttributeDefinition(
+            name = "contentPath",
+            cardinality = Integer.MAX_VALUE,
+            description = "root path of content pages"
+    )
+    public String getContentPath() default "/content";
+
+    @AttributeDefinition(
+            name = "assetPath",
+            cardinality = Integer.MAX_VALUE,
+            description = "root path of content dam"
+    )
+    public String getAssetPath() default "/content/dam";
+
 }
