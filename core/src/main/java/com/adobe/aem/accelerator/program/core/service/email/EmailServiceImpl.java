@@ -56,12 +56,12 @@ public class EmailServiceImpl implements EmailService {
     public List<String> sendEmail(Map<String, String> params) {
         List<String> failedList = null;
         try {
-            params.put(SENDER_EMAIL_ADDRESS,senderEmailAddress);
+            params.put(SENDER_EMAIL_ADDRESS, senderEmailAddress);
             //params.put("bccEmail", getDynamicList(bcc));
             params.put(SUBJECT, subject);
             params.put(CC_EMAIL, getDynamicList(cc));
-            params.put(EMAIL_BODY,emailBody);
-            params.put(SENDER_NAME,senderName);
+            params.put(EMAIL_BODY, emailBody);
+            params.put(SENDER_NAME, senderName);
             failedList = emailService.sendEmail(templatePath, params, recipients);
         } catch (Exception e) {
             LOGGER.error("Exception {}", e.getMessage(), e);
@@ -71,17 +71,17 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public List<String> sendEmail(String templatePath, Map<String,String> params, EmailServiceModel emailServiceModel) {
+    public List<String> sendEmail(String templatePath, Map<String, String> params, EmailServiceModel emailServiceModel) {
         List<String> failedList = null;
-        try{
-            params.put(SENDER_EMAIL_ADDRESS,emailServiceModel.getSenderEmailAddress());
+        try {
+            params.put(SENDER_EMAIL_ADDRESS, emailServiceModel.getSenderEmailAddress());
             //params.put("bccEmail", getDynamicList(emailServiceModel.getBcc()));
             params.put(SUBJECT, emailServiceModel.getSubject());
             params.put(CC_EMAIL, getDynamicList(emailServiceModel.getCc()));
-            params.put(EMAIL_BODY,emailServiceModel.getEmailBody());
-            params.put(SENDER_NAME,emailServiceModel.getSenderName());
+            params.put(EMAIL_BODY, emailServiceModel.getEmailBody());
+            params.put(SENDER_NAME, emailServiceModel.getSenderName());
             failedList = emailService.sendEmail(templatePath, params, emailServiceModel.getRecipients());
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("Exception {}", e.getMessage(), e);
         }
         return failedList;
@@ -89,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public List<String> sendEmail(String templatePath, Map<String, String> emailParams, Map<String, DataSource> attachments, String... recipients) {
-        return emailService.sendEmail(templatePath,emailParams,attachments,recipients);
+        return emailService.sendEmail(templatePath, emailParams, attachments, recipients);
     }
 
     public static String getDynamicList(String[] cc) {

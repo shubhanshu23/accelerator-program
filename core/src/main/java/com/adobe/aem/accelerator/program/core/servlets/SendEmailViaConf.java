@@ -23,8 +23,8 @@ import java.util.Map;
 @Component(service = Servlet.class, property = {
         Constants.SERVICE_DESCRIPTION + "= TEst email service",
         "sling.servlet.methods=" + HttpConstants.METHOD_GET,
-        "sling.servlet.paths=" + "/apps/sendemail"},immediate = true,enabled = true)
-public class SendEmailServlet extends SlingAllMethodsServlet {
+        "sling.servlet.paths=" + "/apps/fixedemail"},immediate = true,enabled = true)
+public class SendEmailViaConf extends SlingAllMethodsServlet {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
@@ -34,28 +34,13 @@ public class SendEmailServlet extends SlingAllMethodsServlet {
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response)
             throws ServletException, IOException {
         List<String> emailList = null;
-        String subject = request.getParameter("subject");
-        String[] recipients = request.getParameter("recipients").split(",");
-        String[] cc = request.getParameter("cc").split(",");
-        String message = request.getParameter("message");
-        String sender = request.getParameter("sender");
         try {
-            String templatepath = "/etc/notification/email/emailtemplate.txt";
-            EmailServiceModel emailServiceModel = new EmailServiceModel();
-            emailServiceModel.setSubject(subject);
-            emailServiceModel.setRecipients(recipients);
-            emailServiceModel.setCc(cc);
-            emailServiceModel.setSenderEmailAddress("shubhanshu.j.singh@gmail.com");
-            emailServiceModel.setSenderName(sender);
-            emailServiceModel.setEmailBody(message);
-            //emailList =emailService.sendEmail(new HashMap<>());
             Map<String,String> map = new HashMap<>();
-            emailList = emailService.sendEmail(templatepath, new HashMap<String, String>(), emailServiceModel);
+            map.put("message","Test Mail");
+            emailList = emailService.sendEmail(map);
         }catch(Exception e){
             LOGGER.error("Exception {}",e.getMessage(),e);
         }
         response.getWriter().print(CollectionUtils.isEmpty(emailList)?"Email Sent":"Email Sending Failed");
     }
-
-
 }
