@@ -1,6 +1,5 @@
 package com.adobe.aem.accelerator.program.core.services.solr.impl;
 
-
 import com.adobe.aem.accelerator.program.core.config.solr.SolrServerConfiguration;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrServerConfigurationService;
 import org.osgi.service.component.annotations.Activate;

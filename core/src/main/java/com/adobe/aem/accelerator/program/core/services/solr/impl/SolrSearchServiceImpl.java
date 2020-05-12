@@ -2,21 +2,21 @@ package com.adobe.aem.accelerator.program.core.services.solr.impl;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import com.adobe.aem.accelerator.program.core.models.solr.SolrSearchRequest;
 import com.adobe.aem.accelerator.program.core.models.solr.SolrSearchResponse;
+import com.adobe.aem.accelerator.program.core.services.solr.SolrIndexListenerConfigurationService;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrQueryCommand;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrSearchService;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrServerConfigurationService;
 import com.adobe.aem.accelerator.program.core.utils.solr.SolrSearchConstants;
 import com.adobe.aem.accelerator.program.core.utils.solr.SolrUtils;
+import com.day.cq.wcm.api.Page;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -63,6 +63,9 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 	@Reference
 	ResourceResolverFactory resolverFactory;
 
+	@Reference
+	SolrIndexListenerConfigurationService solrlistenerService;
+
 	/**
 	 * This method takes path and type of resource to perform search in JCR
 	 *
@@ -80,13 +83,9 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 		params.put("p.limit", "10000");
 
 		Session session = null;
-		Map<String, Object> param = new HashMap<String, Object>();
-		param.put(ResourceResolverFactory.SUBSERVICE, "testUser");
-		ResourceResolver resolver = null;
 		try {
-			resolver = resolverFactory.getServiceResourceResolver(param);
+			ResourceResolver resolver = SolrUtils.getResourceResolver(resolverFactory);
 			session = resolver.adaptTo(Session.class);
-			//session = repository.loginAdministrative(null);
 			Query query = queryBuilder.createQuery(
 					PredicateGroup.create(params), session);
 			SearchResult searchResults = query.getResult();
@@ -117,6 +116,7 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 	 * @return
 	 * @throws RepositoryException
 	 */
+
 	@Override
 	public JSONArray createPageMetadataArray(SearchResult results)
 			throws RepositoryException {
@@ -124,12 +124,15 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 		for (Hit hit : results.getHits()) {
 			Resource pageContent = hit.getResource();
 			ValueMap properties = pageContent.adaptTo(ValueMap.class);
-			String isPageIndexable = properties.get("notsolrindexable",
+			String isPageIndexable = properties.get(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX,
 					String.class);
-			if (null != isPageIndexable && isPageIndexable.equals("true"))
-				continue;
-			JSONObject propertiesMap = createPageMetadataObject(pageContent);
-			solrDocs.put(propertiesMap);
+			//check if the page is to be ignored by the indexing service
+			if(!SolrUtils.isPageIgnored(pageContent.getPath(), solrlistenerService.getIgnoreIndexContentPath())) {
+				if (null != isPageIndexable && !isPageIndexable.equals(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX_VALUE))
+					continue;
+				JSONObject propertiesMap = createPageMetadataObject(pageContent);
+				solrDocs.put(propertiesMap);
+			}
 		}
 
 		return solrDocs;
@@ -145,23 +148,37 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 	@Override
 	public JSONObject createPageMetadataObject(Resource pageContent) {
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
-		propertiesMap.put("id", pageContent.getParent().getPath());
-		propertiesMap.put("url", pageContent.getParent().getPath() + ".html");
-		ValueMap properties = pageContent.adaptTo(ValueMap.class);
-		String pageTitle = properties.get("jcr:title", String.class);
-		if (StringUtils.isEmpty(pageTitle)) {
-			pageTitle = pageContent.getParent().getName();
+		try {
+			Node jcrNode = pageContent.adaptTo(Node.class);
+			Session session = SolrUtils.getResourceResolver(resolverFactory).adaptTo(Session.class);
+			propertiesMap.put("id", pageContent.getParent().getPath());
+			propertiesMap.put("url", pageContent.getParent().getPath() + ".html");
+			ValueMap properties = pageContent.adaptTo(ValueMap.class);
+			String pageTitle = properties.get("jcr:title", String.class);
+			if (StringUtils.isEmpty(pageTitle)) {
+				pageTitle = pageContent.getParent().getName();
+			}
+			propertiesMap.put("title", pageTitle);
+			propertiesMap.put("description", SolrUtils.checkNull(properties.get(
+					"jcr:description", String.class)));
+			propertiesMap.put("publishDate", SolrUtils.checkNull(properties.get(
+					"publishdate", String.class)));
+			propertiesMap.put("body", "");
+			propertiesMap.put("lastModified", SolrUtils.solrDate(properties.get(
+					"cq:lastModified", Calendar.class)));
+			propertiesMap.put("contentType", "page");
+			propertiesMap.put("tags", SolrUtils.getPageTags(pageContent));
+			// child node props
+			SearchResult childNodeSearchResult = SolrUtils.getAllChildPageNodes(queryBuilder, jcrNode.getParent(), session, StringUtils.EMPTY);
+			Iterator<Node> childeNodeIter = childNodeSearchResult.getNodes();
+			Node childNodeOfEachPage = null;
+			while (childeNodeIter.hasNext()) {
+				childNodeOfEachPage = childeNodeIter.next();
+				SolrUtils.addPropertyToJSON(childNodeOfEachPage, propertiesMap, solrlistenerService.getIgnoreProperties());
+			}
+		}catch(Exception e) {
+			LOG.error("Exception at >>", e);
 		}
-		propertiesMap.put("title", pageTitle);
-		propertiesMap.put("description", SolrUtils.checkNull(properties.get(
-				"jcr:description", String.class)));
-		propertiesMap.put("publishDate", SolrUtils.checkNull(properties.get(
-				"publishdate", String.class)));
-		propertiesMap.put("body", "");
-		propertiesMap.put("lastModified", SolrUtils.solrDate(properties.get(
-				"cq:lastModified", Calendar.class)));
-		propertiesMap.put("contentType", "page");
-		propertiesMap.put("tags", SolrUtils.getPageTags(pageContent));
 		return new JSONObject(propertiesMap);
 	}
 
@@ -177,7 +194,6 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 									HttpSolrClient server) throws JSONException, SolrServerException,
 			IOException {
 		if (null != indexPageData) {
-
 			for (int i = 0; i < indexPageData.length(); i++) {
 				JSONObject pageJsonObject = indexPageData.getJSONObject(i);
 				SolrInputDocument doc = createPageSolrDoc(pageJsonObject);
@@ -213,14 +229,22 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 
 	private SolrInputDocument createPageSolrDoc(JSONObject pageJsonObject) throws JSONException {
 		SolrInputDocument doc = new SolrInputDocument();
-		doc.addField("id", pageJsonObject.get("id"));
+		/*doc.addField("id", pageJsonObject.get("id"));
 		doc.addField("title", pageJsonObject.get("title"));
 		doc.addField("body", pageJsonObject.get("body"));
 		doc.addField("url", pageJsonObject.get("url"));
 		doc.addField("description", pageJsonObject.get("description"));
 		doc.addField("lastModified", pageJsonObject.get("lastModified"));
 		doc.addField("contentType", pageJsonObject.get("contentType"));
-		doc.addField("tags", pageJsonObject.get("tags"));
+		doc.addField("tags", pageJsonObject.get("tags"));*/
+
+		Iterator keys = pageJsonObject.keys();
+		while(keys.hasNext()) {
+			Object key = keys.next();
+			Object keyvalue = pageJsonObject.get(key.toString());
+			doc.addField(key.toString(), keyvalue);
+		}
+
 		return doc;
 
 	}
@@ -329,5 +353,43 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 		HttpSolrClient server = new HttpSolrClient(URL);
 		return server;
 	}
+
+	@Override
+	public void deleteByQuery(HttpSolrClient server, SolrQuery query, String pagePath) {
+		try {
+			QueryResponse solrResponse = server.query(query);
+			SolrDocumentList solrDocumentList = solrResponse.getResults();
+			if (solrDocumentList.getNumFound() > 0) {
+				server.deleteByQuery(SolrSearchConstants.SOLRDOC_FIELD_ID +":\"" + pagePath + "\"");
+				server.commit();
+				server.close();
+			}
+		} catch (SolrServerException se) {
+			LOG.error("Error while accessing server for deletion of index", se);
+		} catch (IOException ioe) {
+			LOG.error("Error while accessing server for deletion of index", ioe);
+		}
+	}
+
+	@Override
+	public void updateIndex(HttpSolrClient server, SolrQuery query, Resource res) {
+		try {
+			QueryResponse solrResponse = server.query(query);
+			SolrDocumentList solrDocumentList = solrResponse.getResults();
+			Resource resource = res.adaptTo(Page.class).getContentResource();
+			JSONObject dataObject = createPageMetadataObject(resource);
+			boolean resultindexingPages = indexPageToSolr(dataObject, server);
+			if (resultindexingPages) {
+				LOG.info("Indexed the resource at - " + res.getParent());
+			}
+		}catch (SolrServerException se) {
+			LOG.error("Error while accessing server for updation of index", se);
+		} catch (IOException ioe) {
+			LOG.error("Error while accessing server for updation of index", ioe);
+		}catch (JSONException json) {
+			LOG.error("Error while accessing server for updation of index", json);
+		}
+	}
+
 
 }

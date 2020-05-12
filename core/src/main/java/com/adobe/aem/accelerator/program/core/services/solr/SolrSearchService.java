@@ -23,6 +23,10 @@ public interface SolrSearchService {
 
 	HttpSolrClient prepareSolrServer();
 
+	void deleteByQuery(HttpSolrClient server, SolrQuery query, String pagePath);
+
+	void updateIndex(HttpSolrClient server, SolrQuery query, Resource res);
+
 	JSONArray crawlContent(String resourcePath, String resourceType);
 
 	JSONArray createPageMetadataArray(SearchResult results)
@@ -36,7 +40,7 @@ public interface SolrSearchService {
 	boolean indexPagesToSolr(JSONArray indexPageData, HttpSolrClient server)
 			throws JSONException, SolrServerException, IOException;
 
-	 QueryResponse executeSearch(SolrSearchRequest searchRequest);
+	QueryResponse executeSearch(SolrSearchRequest searchRequest);
 
-	 SolrSearchResponse performFacetSearch(SlingHttpServletRequest request, SlingHttpServletResponse response);
+	SolrSearchResponse performFacetSearch(SlingHttpServletRequest request, SlingHttpServletResponse response);
 }
