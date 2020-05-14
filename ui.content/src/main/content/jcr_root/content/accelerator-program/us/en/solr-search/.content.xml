@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content
+        cq:lastModified="{Date}2020-04-29T15:04:49.883+05:30"
+        cq:lastModifiedBy="admin"
+        cq:template="/conf/accelerator-program/settings/wcm/templates/content-page-template"
+        jcr:primaryType="nt:unstructured"
+        jcr:title="Solr Search"
+        sling:resourceType="accelerator-program/components/structure/page"
+        pageTitle="Solr Search">
+        <logo
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="solr/components/structure/logo"/>
+        <title
+            jcr:lastModified="{Date}2016-06-05T21:02:38.338+05:30"
+            jcr:lastModifiedBy="admin"
+            jcr:primaryType="nt:unstructured"
+            jcr:title="Solr Search "
+            sling:resourceType="solr/components/content/title"
+            type="h1"/>
+        <topnav
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="solr/components/structure/topnav"/>
+        <par
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="wcm/foundation/components/parsys">
+            <solrsearch
+                jcr:created="{Date}2016-06-05T20:49:44.798+05:30"
+                jcr:createdBy="admin"
+                jcr:lastModified="{Date}2016-06-05T20:49:44.798+05:30"
+                jcr:lastModifiedBy="admin"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="solr/components/content/solrsearch"/>
+            <image_1
+                jcr:created="{Date}2015-01-01T00:00:00.000Z"
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="solr/components/content/image"
+                fileReference="/content/dam/solr/asset.jpg"/>
+        </par>
+        <image jcr:primaryType="nt:unstructured">
+            <file/>
+        </image>
+        <root jcr:primaryType="nt:unstructured">
+            <responsivegrid
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="wcm/foundation/components/responsivegrid">
+                <solrsearch
+                    jcr:created="{Date}2020-04-29T15:04:49.863+05:30"
+                    jcr:createdBy="admin"
+                    jcr:lastModified="{Date}2020-04-29T15:04:49.863+05:30"
+                    jcr:lastModifiedBy="admin"
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="accelerator-program/components/content/solrsearch"/>
+            </responsivegrid>
+        </root>
+    </jcr:content>
+    <indexes/>
+</jcr:root>
