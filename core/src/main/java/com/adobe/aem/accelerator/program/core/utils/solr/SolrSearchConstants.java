@@ -50,6 +50,7 @@ public final class SolrSearchConstants
     public static final String SOLRDOC_FIELD_ID = "id";
     public static final String SOLRDOC_FIELD_URL = "url";
 
+    public static final String SOLR_INDEXING_PROP_PATH = "/content/accelerator-program/us/en/solr-search/jcr:content/root/responsivegrid/solrsearch";
 
 }
 

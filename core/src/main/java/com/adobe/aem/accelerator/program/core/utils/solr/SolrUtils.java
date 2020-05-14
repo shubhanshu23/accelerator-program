@@ -60,10 +60,12 @@ public final class SolrUtils
         return null;
     }
 
-    public static boolean isPageIgnored(final String pagePath, final String[] ignoredPages) {
-        for(String ignoredPath : ignoredPages) {
-            if (pagePath.contains(ignoredPath)) {
-                return true;
+    public static boolean isPageIgnored(final String pagePath, final String[] ignoredPages, ResourceResolver resolver) {
+        if(ignoredPages != null) {
+            for (String ignoredPath : ignoredPages) {
+                if (pagePath.contains(ignoredPath) ){
+                    return true;
+                }
             }
         }
         return false;
@@ -137,5 +139,30 @@ public final class SolrUtils
                 }
             }
         }
+    }
+    public static String[] getIndexDetails(ResourceResolver resolver, String propertyName) {
+        String[] strArray = null;
+        List<String> ignorePages = new ArrayList();
+        try {
+            Resource res = resolver.getResource(SolrSearchConstants.SOLR_INDEXING_PROP_PATH);
+            if (res != null) {
+                Property property = res.adaptTo(Node.class).getProperty(propertyName);
+                Value[] values = null;
+                if (property.isMultiple()) {
+                   values  = property.getValues();
+                    for(Value val : values){
+                        String page = val.getString();
+                        ignorePages.add(page);
+                    }
+                }else {
+                    Value value = property.getValue();
+                    ignorePages.add(value.getString());
+                }
+            strArray = ignorePages.toArray(new String[ignorePages.size()]);
+            }
+        } catch(Exception e) {
+            LOG.error("Exception occured at >>", e);
+        }
+        return strArray;
     }
 }

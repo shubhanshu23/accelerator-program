@@ -21,7 +21,7 @@
 				});
 
                  $.ajax({
-                     url: "http://localhost:4502/bin/solr/facets?text="+searchTerm + facet,                   
+                     url: "/bin/solr/facets?text="+searchTerm + facet,
                      jsonp: 'json.wrf',
                      success: function(result){
                          console.log(result);

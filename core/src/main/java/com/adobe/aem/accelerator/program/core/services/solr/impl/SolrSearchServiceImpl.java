@@ -66,6 +66,7 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 	@Reference
 	SolrIndexListenerConfigurationService solrlistenerService;
 
+
 	/**
 	 * This method takes path and type of resource to perform search in JCR
 	 *
@@ -121,19 +122,25 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 	public JSONArray createPageMetadataArray(SearchResult results)
 			throws RepositoryException {
 		JSONArray solrDocs = new JSONArray();
-		for (Hit hit : results.getHits()) {
-			Resource pageContent = hit.getResource();
-			ValueMap properties = pageContent.adaptTo(ValueMap.class);
-			String isPageIndexable = properties.get(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX,
-					String.class);
-			//check if the page is to be ignored by the indexing service
-			if(!SolrUtils.isPageIgnored(pageContent.getPath(), solrlistenerService.getIgnoreIndexContentPath())) {
-				if (null != isPageIndexable && !isPageIndexable.equals(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX_VALUE))
-					continue;
-				JSONObject propertiesMap = createPageMetadataObject(pageContent);
-				solrDocs.put(propertiesMap);
+		try {
+			for (Hit hit : results.getHits()) {
+				Resource pageContent = hit.getResource();
+				ValueMap properties = pageContent.adaptTo(ValueMap.class);
+				String isPageIndexable = properties.get(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX,
+						String.class);
+				//check if the page is to be ignored by the indexing service
+				String[] ignorePages = SolrUtils.getIndexDetails(SolrUtils.getResourceResolver(resolverFactory),"ignorePages");
+				if (!SolrUtils.isPageIgnored(pageContent.getPath(), ignorePages, SolrUtils.getResourceResolver(resolverFactory))) {
+					if (null != isPageIndexable && !isPageIndexable.equals(SolrSearchConstants.PROPERTY_EXCLUDE_FROM_INDEX_VALUE))
+						continue;
+					JSONObject propertiesMap = createPageMetadataObject(pageContent);
+					solrDocs.put(propertiesMap);
+				}
 			}
+		} catch(LoginException e) {
+			LOG.error("Login Exception:" , e);
 		}
+
 
 		return solrDocs;
 
@@ -150,7 +157,8 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		try {
 			Node jcrNode = pageContent.adaptTo(Node.class);
-			Session session = SolrUtils.getResourceResolver(resolverFactory).adaptTo(Session.class);
+			ResourceResolver resolver = SolrUtils.getResourceResolver(resolverFactory);
+			Session session = resolver.adaptTo(Session.class);
 			propertiesMap.put("id", pageContent.getParent().getPath());
 			propertiesMap.put("url", pageContent.getParent().getPath() + ".html");
 			ValueMap properties = pageContent.adaptTo(ValueMap.class);
@@ -174,7 +182,7 @@ public class SolrSearchServiceImpl implements SolrSearchService {
 			Node childNodeOfEachPage = null;
 			while (childeNodeIter.hasNext()) {
 				childNodeOfEachPage = childeNodeIter.next();
-				SolrUtils.addPropertyToJSON(childNodeOfEachPage, propertiesMap, solrlistenerService.getIgnoreProperties());
+				SolrUtils.addPropertyToJSON(childNodeOfEachPage, propertiesMap, SolrUtils.getIndexDetails(resolver,"ignoreProperties"));
 			}
 		}catch(Exception e) {
 			LOG.error("Exception at >>", e);

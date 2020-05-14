@@ -1,7 +1,5 @@
 package com.adobe.aem.accelerator.program.core.listeners.solr;
 
-import com.adobe.aem.accelerator.program.core.config.solr.SolrIndexListenerConfiguration;
-import com.adobe.aem.accelerator.program.core.config.solr.SolrServerConfiguration;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrIndexListenerConfigurationService;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrSearchService;
 import com.adobe.aem.accelerator.program.core.services.solr.SolrServerConfigurationService;
@@ -51,6 +49,7 @@ public class SolrIndexReplicationHandler implements EventHandler {
     @Reference
     private SolrIndexListenerConfigurationService solrListenerService;
 
+
     @Override
     public void handleEvent(Event event) {
         if(solrListenerService.getListenerEnabled()) {
@@ -64,7 +63,8 @@ public class SolrIndexReplicationHandler implements EventHandler {
                     ReplicationAction replicationAction = pageEvent.getReplicationAction();
                     if (null != replicationAction) {
                         String replicatedPagePath = replicationAction.getPath();
-                        boolean isPageIgnored = SolrUtils.isPageIgnored(replicatedPagePath, solrListenerService.getIgnoreIndexContentPath());
+                        String[] ignorePages = SolrUtils.getIndexDetails(resolver,"ignorePages");
+                        boolean isPageIgnored =  SolrUtils.isPageIgnored(replicatedPagePath, ignorePages, resolver);
                         if (!isPageIgnored) {
                             HttpSolrClient server = solrSearchService.prepareSolrServer();
                             SolrQuery query = new SolrQuery();
@@ -93,4 +93,5 @@ public class SolrIndexReplicationHandler implements EventHandler {
             }
         }
     }
+
 }

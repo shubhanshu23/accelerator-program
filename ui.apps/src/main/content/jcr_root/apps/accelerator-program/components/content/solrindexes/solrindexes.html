@@ -5,14 +5,13 @@
         <option value="create">Create Indexes</option>
         <option value="delete">Delete Indexes</option>
     </select>
-<input type="submit" value="Submit" class="index">
+    <input type="submit" value="Submit" class="index">
 </form>
 
- <div id="results" > </div>
+<div id="results" > </div>
 
 <script text="javascript">
 $( "#indexes" ).submit(function( event ) {
-  alert( "Handler for .submit() called." + $('#dropDownId :selected').val());
 	if($('#dropDownId :selected').val() === "create") {
     $.ajax({
   		url: "/bin/solr/push/pages?indexType=indexpages",
