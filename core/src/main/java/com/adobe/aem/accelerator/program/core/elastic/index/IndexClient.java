@@ -1,5 +1,6 @@
 package com.adobe.aem.accelerator.program.core.elastic.index;
 
+import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.AssetContentBuilder;
 import com.adobe.aem.accelerator.program.core.elastic.service.ElasticSearchClientService;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -8,11 +9,14 @@ import org.elasticsearch.client.indices.GetIndexRequest;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 @Component(service = IndexClient.class)
 public class IndexClient {
+    private static final Logger LOG = LoggerFactory.getLogger(IndexClient.class);
 
     @Reference
     ElasticSearchClientService elasticSearchClientService;
@@ -27,9 +31,7 @@ public class IndexClient {
                 return true;
             }
         } catch (Exception e) {
-            e.printStackTrace(System.err);
-        } finally {
-            restHighLevelClient.close();
+           LOG.error("Exception {}",e.getMessage(),e);
         }
         return false;
     }
@@ -40,7 +42,7 @@ public class IndexClient {
             GetIndexRequest getIndexRequest = new GetIndexRequest(indexName);
             return restHighLevelClient.indices().exists(getIndexRequest, RequestOptions.DEFAULT);
         } catch (Exception e) {
-            e.printStackTrace(System.err);
+            LOG.error("Exception {}",e.getMessage(),e);
         }
         return false;
     }

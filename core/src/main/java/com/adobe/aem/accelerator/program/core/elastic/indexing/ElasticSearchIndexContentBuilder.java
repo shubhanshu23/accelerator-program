@@ -1,5 +1,6 @@
 package com.adobe.aem.accelerator.program.core.elastic.indexing;
 
+import com.adobe.aem.accelerator.program.core.elastic.indexing.config.ElasticSearchIndexConfiguration;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.AssetContentBuilder;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.ElasticSearchContentBuilder;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.PageContentBuilder;
@@ -36,6 +37,9 @@ public class ElasticSearchIndexContentBuilder implements ContentBuilder {
 
     @Reference
     private ResourceResolverFactory resolverFactory;
+
+    @Reference
+    ElasticSearchIndexConfiguration elasticSearchIndexConfiguration;
 
     /**
      * Name of the Content Builder
@@ -83,7 +87,7 @@ public class ElasticSearchIndexContentBuilder implements ContentBuilder {
                     String primaryType = resource.getValueMap().get(JcrConstants.JCR_PRIMARYTYPE, String.class);
                     ElasticSearchContentBuilder builder = getContentBuilder(primaryType, log);
                     if (builder != null) {
-                        ReplicationContent replicationContent = createReplicationContent(factory, builder.create(path, resolver));
+                        ReplicationContent replicationContent = createReplicationContent(factory, builder.create(path, resolver,elasticSearchIndexConfiguration));
                         log.info("Replication content :"+replicationContent);
                         return replicationContent;
                     }

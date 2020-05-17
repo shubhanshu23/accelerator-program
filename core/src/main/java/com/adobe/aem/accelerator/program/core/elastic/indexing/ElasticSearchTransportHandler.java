@@ -106,7 +106,7 @@ public class ElasticSearchTransportHandler implements TransportHandler {
         ReplicationLog log = tx.getLog();
         ObjectMapper mapper = new ObjectMapper();
         DocumentModel content = mapper.readValue(tx.getContent().getInputStream(), DocumentModel.class);
-        log.info("content>>>" + content);
+        log.info("content>>>" + content.getIndex());
 
         if (content != null) {
             log.info(getClass().getSimpleName() + ": Indexing " + content.getPath());

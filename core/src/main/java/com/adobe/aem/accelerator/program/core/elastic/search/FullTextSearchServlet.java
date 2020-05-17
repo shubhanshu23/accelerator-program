@@ -1,5 +1,6 @@
 package com.adobe.aem.accelerator.program.core.elastic.search;
 
+import com.adobe.aem.accelerator.program.core.elastic.indexing.config.ElasticSearchIndexConfiguration;
 import org.apache.http.HttpHost;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -19,6 +20,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +38,9 @@ public class FullTextSearchServlet extends SlingAllMethodsServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(FullTextSearchServlet.class);
 
+    @Reference
+    ElasticSearchIndexConfiguration elasticSearchIndexConfiguration;
+
     @Override
     protected void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         String query = request.getParameter("query");
@@ -44,7 +49,7 @@ public class FullTextSearchServlet extends SlingAllMethodsServlet {
         String limit = request.getParameter("limit");
         String offset = request.getParameter("offset");
         if (query != null) {
-            SearchRequest searchRequest = new SearchRequest("idx");
+            SearchRequest searchRequest = new SearchRequest(elasticSearchIndexConfiguration.getIndex());
             SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
             searchSourceBuilder.from(Integer.parseInt(offset));
             searchSourceBuilder.size(Integer.parseInt(limit));

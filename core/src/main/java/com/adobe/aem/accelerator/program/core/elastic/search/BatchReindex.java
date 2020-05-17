@@ -1,6 +1,7 @@
 package com.adobe.aem.accelerator.program.core.elastic.search;
 
 import com.adobe.aem.accelerator.program.core.elastic.indexing.DocumentModel;
+import com.adobe.aem.accelerator.program.core.elastic.indexing.config.ElasticSearchIndexConfiguration;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.AssetContentBuilder;
 import com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder.PageContentBuilder;
 import com.day.cq.search.PredicateGroup;
@@ -33,6 +34,9 @@ public class BatchReindex {
     @Reference
     private SlingRepository repository;
 
+    @Reference
+    ElasticSearchIndexConfiguration elasticSearchIndexConfiguration;
+
     public List<DocumentModel> crawlContent(String resourceType, String resourcePath, ResourceResolver resolver) {
         Map<String, String> params = new HashMap<String, String>();
         params.put("path", resourcePath);
@@ -63,10 +67,10 @@ public class BatchReindex {
             Resource resource = hit.getResource();
             DocumentModel doc;
             if(resourceType.equals("cq:PageContent")){
-                doc = new PageContentBuilder().create(resource.getParent().getPath(),resolver);
+                doc = new PageContentBuilder().create(resource.getParent().getPath(),resolver,elasticSearchIndexConfiguration);
                 docList.add(doc);
             } else if(resourceType.equals("dam:AssetContent")){
-                doc = new AssetContentBuilder().create(resource.getParent().getPath(),resolver);
+                doc = new AssetContentBuilder().create(resource.getParent().getPath(),resolver,elasticSearchIndexConfiguration);
                 docList.add(doc);
             }
         }

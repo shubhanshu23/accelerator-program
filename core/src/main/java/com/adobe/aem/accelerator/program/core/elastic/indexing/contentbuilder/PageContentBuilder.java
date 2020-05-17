@@ -1,6 +1,7 @@
 package com.adobe.aem.accelerator.program.core.elastic.indexing.contentbuilder;
 
 import com.adobe.aem.accelerator.program.core.elastic.indexing.DocumentModel;
+import com.adobe.aem.accelerator.program.core.elastic.indexing.config.ElasticSearchIndexConfiguration;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 import org.apache.commons.lang3.ArrayUtils;
@@ -22,14 +23,15 @@ public class PageContentBuilder extends ElasticSearchContentBuilderImpl {
   private static final String[] FIXED_RULES = {"cq:template", "jcr:description", "jcr:title","cq:tags"};
 
   @Override
-  public DocumentModel create(String path, @Nonnull ResourceResolver resolver) {
+  public DocumentModel create(String path, @Nonnull ResourceResolver resolver,ElasticSearchIndexConfiguration elasticSearchIndexConfiguration) {
     String[] indexRules = getIndexRules(PRIMARY_TYPE_VALUE);
     if (ArrayUtils.isNotEmpty(indexRules)) {
       PageManager pageManager = resolver.adaptTo(PageManager.class);
       if (pageManager != null) {
         Page page = pageManager.getPage(path);
         if (page != null) {
-          DocumentModel ret = new DocumentModel("idx", "page", path);
+
+          DocumentModel ret = new DocumentModel(elasticSearchIndexConfiguration.getIndex(), "page", path);
           Resource res = page.getContentResource();
           if (res != null) {
             ret.addContent(getProperties(res, indexRules));

@@ -60,7 +60,8 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
         try {
             String pageindex = request.getParameter("pageindex");
             String assetindex = request.getParameter("assetindex");
-            if(!client.indexExists(elasticSearchIndexConfiguration.getIndex(),elasticSearchClientService.getRestHighLevelClient())){
+            RestHighLevelClient restHighLevelClient = elasticSearchClientService.getRestHighLevelClient();
+            if(!client.indexExists(elasticSearchIndexConfiguration.getIndex(),restHighLevelClient)){
                 client.createIndex(elasticSearchIndexConfiguration.getIndex());
             }
 
@@ -75,8 +76,9 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
                         elasticSearchIndexConfiguration.getAssetPath(),resourceResolver);
                 bulkInsert(bulkRequest,assetList);
             }
-            BulkResponse bulkResponse = getBulkItemResponses(bulkRequest);
+            BulkResponse bulkResponse = getBulkItemResponses(bulkRequest,restHighLevelClient);
             response.setContentType("text/plain");
+            LOG.info("BulkResponse {}",bulkResponse.status());
             response.getOutputStream().print("Bulk Update Success ::"+!bulkResponse.hasFailures());
         } catch (Exception e) {
             LOG.error("Exception {}", e.getMessage(), e);
@@ -100,18 +102,16 @@ public class BulkIndexServlet extends SlingAllMethodsServlet {
                 }
 
             } catch (Exception e) {
-                e.printStackTrace();
+                LOG.error("Exception {}",e.getMessage(),e);
             }
 
         });
         return bulkRequest;
     }
 
-    private BulkResponse getBulkItemResponses(BulkRequest bulkRequest) {
+    private BulkResponse getBulkItemResponses(BulkRequest bulkRequest,RestHighLevelClient restHighLevelClient) {
         BulkResponse bulkResponse=null;
         try {
-            RestHighLevelClient restHighLevelClient = new RestHighLevelClient(RestClient.builder(
-                    new HttpHost(hostConfiguration.getHost(), hostConfiguration.getPort(), hostConfiguration.getProtocol())));
             bulkResponse = restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT);
             LOG.info("BulkResponse {}", bulkResponse);
         } catch (Exception e) {
