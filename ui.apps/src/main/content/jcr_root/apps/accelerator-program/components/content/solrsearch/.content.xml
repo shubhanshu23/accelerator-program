@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:description="This is a basic solr search component which uses ajax to connect to solr server to fetch the data"
+    jcr:mixinTypes="[]"
+    jcr:primaryType="cq:Component"
+    jcr:title="Solr Search"
+    componentGroup="accelerator-program.Content"/>
