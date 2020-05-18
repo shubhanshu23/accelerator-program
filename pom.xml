@@ -1942,7 +1942,14 @@
         <artifactId>javax.inject</artifactId>
         <version>1</version>
       </dependency>
-
+      
+      <dependency>
+        <groupId>com.adobe.acs</groupId>
+        <artifactId>acs-aem-commons-bundle</artifactId>
+        <version>4.5.2</version>
+        <scope>provided</scope>
+      </dependency>
+      
       <dependency>
         <artifactId>commons-lang3</artifactId>
         <version>3.9</version>
