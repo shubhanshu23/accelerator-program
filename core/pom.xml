@@ -33,6 +33,21 @@
                 <artifactId>sling-maven-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependency</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>org.apache.servicemix.bundles.solr-solrj,org.apache.servicemix.bundles.noggit,zookeeper,log4j</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
                 <executions>
@@ -44,8 +59,19 @@
                         <configuration>
                             <bnd><![CDATA[
 Bundle-Category: accelerator-program
-Import-Package: javax.annotation;version=0.0.0,*
+Import-Package: javax.annotation;version=0.0.0,\
+!com.ibm.*,\
+!sun.security.krb5.*,\
+!com.sun.*,\
+!javax.jmdns.*,\
+!javax.jms.*,\
+!jline.*,\
+!org.jboss.netty.*,\
+!org.relaxng.datatype.*,\
+*
 -exportcontents: ${packages;VERSIONED}
+Include-Resource: org.apache.servicemix.bundles.solr-solrj-5.4.1_1.jar;lib=true,org.apache.servicemix.bundles.noggit-0.8_1.jar;lib=true,zookeeper-3.4.5.jar;lib:=true,log4j-1.2.16.jar;lib:=true
+Bundle-ClassPath: ., org.apache.servicemix.bundles.solr-solrj-5.4.1_1.jar,noggit-0.5.jar,zookeeper-3.4.5.jar,log4j-1.2.16.jar,org.apache.servicemix.bundles.noggit-0.8_1.jar
 Sling-Model-Packages: com.adobe.aem.accelerator.program.core.models
 -snapshot: ${tstamp;yyyyMMddHHmmssSSS}
 Bundle-DocURL:
@@ -223,5 +249,29 @@ Bundle-DocURL:
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.solr-solrj</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.noggit</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.zookeeper</groupId>
+            <artifactId>zookeeper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+  
     </dependencies>
 </project>

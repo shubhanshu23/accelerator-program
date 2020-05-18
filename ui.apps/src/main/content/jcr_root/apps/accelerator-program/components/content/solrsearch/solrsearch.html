@@ -1,0 +1,76 @@
+<script src="https://code.jquery.com/jquery-3.1.0.js" integrity="sha256-slogkvB1K3VOkzAI8QITxV3VzpOnkeNVsKvtkYLMjfk=" crossorigin="anonymous"></script>  
+<h4>This is a basic search component which connects solr to fetch search results</h4>
+<input type="text" id="search-box" />
+<input type="button" id="search-button" value="Search"/>
+<div id="facets"></div>
+<div id="search-result"></div>
+<br>
+<script type="application/javascript">
+    $( document ).ready(function() {
+        $("#search-button").click(function(){
+            $("#search-result").empty(); 
+            if($("#search-box").val() == null){
+                alert("please enter the search term");
+            }
+            else{
+                var searchTerm = $("#search-box").val();
+                var facet = "";
+                $("#formFacets input.facets:checked").each(function() {    				
+					facet = facet+"&filters="+ this.dataset.ftype + ":" +this.value;
+                    console.log("Value -----" + this.value);
+				});
+
+                 $.ajax({
+                     url: "/bin/solr/facets?text="+searchTerm + facet,
+                     jsonp: 'json.wrf',
+                     success: function(result){
+                         console.log(result);
+                         var numResultsFound = result.total;
+                         var facets = result.facets.map;                        
+                         var elements = facets.tags.myArrayList;
+
+						console.log("Size :" +elements.length);
+						//facets 
+                        $("#formFacets").empty();
+                        //if($('#formFacets').length != 1) {
+							$("#facets").append("<form id='formFacets'>");
+							$.each(elements, function( index, value ) {
+
+                        	if(value.map.count > 0) {
+                        		var gName = "genre"+index;   //"<p>"+ value+ "<p>";
+                            	var link = "<input data-fType='tags' class='facets' type='checkbox' name='"+ gName +"' value='"+ value.map.value +"'><label for='"+ gName +"'>" + value.map.value + "</label>";
+								$("#formFacets").append(link);
+
+                             }
+                            });
+                        // }
+                      $("#facets").append("</form>");
+                         if( numResultsFound > 0){
+                             $("#search-result").append("<h4> Search results: </h4>");
+                             $("#search-result").append("<h5>"+numResultsFound+" found for the search term -- "+searchTerm+"</h5>");
+
+                             $.each(result.solrDocumentList, function( index, value ) {
+                                 var link = "<a href='"+value.url[0]+"'>"+value.title+"</a>";
+                                 //var link = "<p>"+ value.url + " By  <b>" + value.title + "<b><p>";
+                                 console.log(link);
+
+                                 $("#search-result").append(link+"<br>");                             
+                             });
+                         }
+                         else{
+                              $("#search-result").append("<h4> No results found for search term "+searchTerm+" </h4>");
+
+                         }
+
+
+                     },
+                     error: function(){
+                         $("#search-result").append("Something went wrong :( ");
+                         $("#facets").empty();
+                     }
+                 });
+
+            }
+        });
+    });
+</script>
