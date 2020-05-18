@@ -42,6 +42,8 @@
 
     <module>core</module>
 
+    <module>elastic</module>
+
 
     <module>ui.frontend</module>
 

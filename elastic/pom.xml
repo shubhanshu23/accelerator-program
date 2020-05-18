@@ -23,14 +23,32 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>aem-accelerator-program.core</artifactId>
-    <name>Accelerator Program - Core</name>
-    <description>Core bundle for Accelerator Program</description>
+    <artifactId>aem-accelerator-program.elastic</artifactId>
+    <name>Accelerator Program - Elastic Search Core</name>
+    <description>Elastic Search bundle for Accelerator Program</description>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>sling-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependency</id>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>elasticsearch-7.6.1.jar,httpasyncclient-4.1.4.jar,elasticsearch-rest-client-7.6.1.jar,\
+                                elasticsearch-rest-high-level-client-7.6.1.jar,elasticsearch-x-content-7.6.1.jar,\
+                                lucene-core-8.4.0.jar,hppc-0.8.1.jar,log4j-api-2.11.1.jar,lucene-queries-8.4.0.jar,lang-mustache-client-7.6.1.jar,\
+                            rank-eval-client-7.6.1.jar,elasticsearch-core-7.6.1.jar,lucene-join-8.4.0.jar</includeArtifactIds>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
@@ -42,10 +60,59 @@
                             <goal>bnd-process</goal>
                         </goals>
                         <configuration>
+
                             <bnd><![CDATA[
 Bundle-Category: accelerator-program
-Import-Package: javax.annotation;version=0.0.0,*
+Import-Package: javax.annotation;version=0.0.0,\
+!com.carrotsearch.*,\
+!com.sun.jna.*,\
+!joptsimple.*,\
+!org.HdrHistogram.*,\
+!org.apache.logging.*,\
+!org.elasticsearch.common.concurrent.*,\
+!org.elasticsearch.core.*,\
+!org.elasticsearch.geometry.*,\
+!org.elasticsearch.index.*,\
+!org.elasticsearch.script.*,\
+!org.elasticsearch.secure.*,\
+!org.locationtech.*,\
+!sun.misc.*,\
+!com.sun.management.*,\
+!com.tdunning.math.stats.*,\
+!org.elasticsearch.secure_sm,\
+!com.fasterxml.jackson.dataformat.*,\
+!org.apache.lucene.*,\
+!com.github.mustachejava.*,\
+!jdk.net.*,\
+*
 -exportcontents: ${packages;VERSIONED}
+-fixupmessages:"Classes found in the wrong directory";is:=warning
+Include-Resource: elasticsearch-7.6.1.jar;lib=true,\
+lang-mustache-client-7.6.1.jar;lib=true,\
+rank-eval-client-7.6.1.jar;lib=true,\
+elasticsearch-rest-client-7.6.1.jar;lib=true,\
+elasticsearch-rest-high-level-client-7.6.1.jar;lib=true,\
+httpasyncclient-4.1.4.jar;lib=true,\
+elasticsearch-x-content-7.6.1.jar;lib=true,\
+hppc-0.8.1.jar;lib=true,\
+lucene-core-8.4.0.jar;lib=true,\
+lucene-join-8.4.0.jar;lib=true,\
+log4j-api-2.11.1.jar;lib=true,\
+lucene-queries-8.4.0.jar;lib=true,\
+elasticsearch-core-7.6.1.jar;lib=true
+Bundle-ClassPath: .,elasticsearch-rest-client-7.6.1.jar,\
+elasticsearch-rest-high-level-client-7.6.1.jar,\
+httpasyncclient-4.1.4.jar,\
+elasticsearch-x-content-7.6.1.jar,\
+lucene-core-8.4.0.jar,\
+hppc-0.8.1.jar,\
+elasticsearch-7.6.1.jar,\
+log4j-api-2.11.1.jar,\
+lucene-queries-8.4.0.jar,\
+lang-mustache-client-7.6.1.jar,\
+rank-eval-client-7.6.1.jar,\
+elasticsearch-core-7.6.1.jar,\
+lucene-join-8.4.0.jar
 Sling-Model-Packages: com.adobe.aem.accelerator.program.core.models
 -snapshot: ${tstamp;yyyyMMddHHmmssSSS}
 Bundle-DocURL:
@@ -221,6 +288,79 @@ Bundle-DocURL:
             <artifactId>uber-jar</artifactId>
             <classifier>apis</classifier>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch-client -->
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>elasticsearch-rest-high-level-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch-x-content</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>rank-eval-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpasyncclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.carrotsearch</groupId>
+            <artifactId>hppc</artifactId>
+            <version>0.8.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.11.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>8.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-join</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.elasticsearch.plugin/lang-mustache-client -->
+        <dependency>
+            <groupId>org.elasticsearch.plugin</groupId>
+            <artifactId>lang-mustache-client</artifactId>
+        </dependency>
 
+
+        <!--        <dependency>-->
+<!--            <groupId>org.apache.commons</groupId>-->
+<!--            <artifactId>commons-imaging</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
